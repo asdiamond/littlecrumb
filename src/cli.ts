@@ -3,15 +3,19 @@
 import { watch } from "node:fs";
 import { rm } from "node:fs/promises";
 import path from "node:path";
-import { generate, isPageFile } from "./generate";
+import { generate, isGeneratorInput } from "./generate";
+
+function describe(result: { pages: number; apis: number }) {
+  return `${result.pages} page(s), ${result.apis} API route(s)`;
+}
 
 const root = process.cwd();
 const command = Bun.argv[2] ?? "dev";
-const generatedServer = path.join(root, ".bunnext", "server.ts");
+const generatedServer = path.join(root, ".crumb", "server.ts");
 
 async function runDev() {
   const result = await generate(root);
-  console.log(`bunnext: generated ${result.pages} route(s)`);
+  console.log(`crumb: generated ${describe(result)}`);
 
   const child = Bun.spawn(["bun", "--hot", generatedServer], {
     cwd: root,
@@ -25,13 +29,13 @@ async function runDev() {
     path.join(root, "app"),
     { recursive: true },
     (_event, filename) => {
-      if (!isPageFile(filename?.toString() ?? null)) return;
+      if (!isGeneratorInput(filename?.toString() ?? null)) return;
 
       clearTimeout(timer);
       timer = setTimeout(async () => {
         try {
           const next = await generate(root);
-          console.log(`bunnext: regenerated ${next.pages} route(s)`);
+          console.log(`crumb: regenerated ${describe(next)}`);
         } catch (error) {
           console.error(error instanceof Error ? error.message : error);
         }
@@ -73,14 +77,14 @@ async function runBuild() {
   }
 
   console.log(
-    `bunnext: built ${generated.pages} route(s) to ${outputDirectory}`,
+    `crumb: built ${describe(generated)} to ${outputDirectory}`,
   );
 }
 
 async function runStart() {
   const server = path.join(root, "dist", "server.js");
   if (!(await Bun.file(server).exists())) {
-    throw new Error("bunnext: dist/server.js not found; run bunnext build first");
+    throw new Error("crumb: dist/server.js not found; run crumb build first");
   }
 
   const child = Bun.spawn(["bun", "server.js"], {
@@ -103,7 +107,7 @@ try {
   else if (command === "build") await runBuild();
   else if (command === "start") await runStart();
   else {
-    console.error("Usage: bunnext <dev|build|start>");
+    console.error("Usage: crumb <dev|build|start>");
     process.exitCode = 1;
   }
 } catch (error) {

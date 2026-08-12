@@ -1,10 +1,10 @@
 {
-  "name": "bunnext",
+  "name": "crumb",
   "version": "0.0.1",
   "description": "Minimal file-based React SPA framework for Bun",
   "type": "module",
   "bin": {
-    "bunnext": "./src/cli.ts"
+    "crumb": "./src/cli.ts"
   },
   "exports": {
     "./client": "./src/client.tsx"

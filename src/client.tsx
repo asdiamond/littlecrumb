@@ -9,7 +9,7 @@ export function start(routes: RouteObject[]) {
   const element = document.getElementById("root");
 
   if (!element) {
-    throw new Error('bunnext: missing <div id="root"></div>');
+    throw new Error('crumb: missing <div id="root"></div>');
   }
 
   const router = createBrowserRouter(routes);
