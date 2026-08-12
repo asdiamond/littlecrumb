@@ -185,7 +185,12 @@ console.log(\`littlecrumb: http://localhost:\${port}\`);
     writeIfChanged(path.join(outputDirectory, "server.ts"), serverSource),
   ]);
 
-  return { pages: pages.length, apis: apis.length, outputDirectory };
+  return {
+    pages: pages.length,
+    apis: apis.length,
+    routes: routedPages.map(({ route }) => route),
+    outputDirectory,
+  };
 }
 
 export function isGeneratorInput(file: string | null) {

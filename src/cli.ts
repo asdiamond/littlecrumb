@@ -81,6 +81,54 @@ async function runBuild() {
   );
 }
 
+async function runStaticBuild() {
+  const generated = await generate(root);
+  if (generated.apis > 0) {
+    throw new Error(
+      `littlecrumb: static builds cannot serve API routes (found ${generated.apis}); remove them or use \`littlecrumb build\``,
+    );
+  }
+
+  const outputDirectory = path.join(root, "dist");
+  await rm(outputDirectory, { recursive: true, force: true });
+
+  const result = await Bun.build({
+    entrypoints: [path.join(root, ".littlecrumb", "index.html")],
+    outdir: outputDirectory,
+    target: "browser",
+    // Absolute asset URLs so the shell works when served from nested
+    // route paths or as a 404 fallback.
+    publicPath: "/",
+    minify: true,
+    sourcemap: "linked",
+  });
+
+  if (!result.success) {
+    for (const log of result.logs) console.error(log);
+    process.exitCode = 1;
+    return;
+  }
+
+  // Materialize a copy of the shell for every static route so object-store
+  // hosts (S3, R2) can serve deep links without rewrite rules. Dynamic
+  // routes fall back to 404.html.
+  const shell = await Bun.file(path.join(outputDirectory, "index.html")).text();
+  let materialized = 0;
+  for (const route of generated.routes) {
+    if (route === "/" || route.includes(":") || route.includes("*")) continue;
+    await Bun.write(
+      path.join(outputDirectory, route.slice(1), "index.html"),
+      shell,
+    );
+    materialized++;
+  }
+  await Bun.write(path.join(outputDirectory, "404.html"), shell);
+
+  console.log(
+    `littlecrumb: built ${generated.pages} page(s) to ${outputDirectory} (static, ${materialized} materialized route(s))`,
+  );
+}
+
 async function runStart() {
   const server = path.join(root, "dist", "server.js");
   if (!(await Bun.file(server).exists())) {
@@ -104,10 +152,12 @@ async function runStart() {
 
 try {
   if (command === "dev") await runDev();
+  else if (command === "build" && Bun.argv.includes("--static"))
+    await runStaticBuild();
   else if (command === "build") await runBuild();
   else if (command === "start") await runStart();
   else {
-    console.error("Usage: littlecrumb <dev|build|start>");
+    console.error("Usage: littlecrumb <dev|build [--static]|start>");
     process.exitCode = 1;
   }
 } catch (error) {
