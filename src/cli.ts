@@ -11,11 +11,11 @@ function describe(result: { pages: number; apis: number }) {
 
 const root = process.cwd();
 const command = Bun.argv[2] ?? "dev";
-const generatedServer = path.join(root, ".crumb", "server.ts");
+const generatedServer = path.join(root, ".littlecrumb", "server.ts");
 
 async function runDev() {
   const result = await generate(root);
-  console.log(`crumb: generated ${describe(result)}`);
+  console.log(`littlecrumb: generated ${describe(result)}`);
 
   const child = Bun.spawn(["bun", "--hot", generatedServer], {
     cwd: root,
@@ -35,7 +35,7 @@ async function runDev() {
       timer = setTimeout(async () => {
         try {
           const next = await generate(root);
-          console.log(`crumb: regenerated ${describe(next)}`);
+          console.log(`littlecrumb: regenerated ${describe(next)}`);
         } catch (error) {
           console.error(error instanceof Error ? error.message : error);
         }
@@ -77,14 +77,14 @@ async function runBuild() {
   }
 
   console.log(
-    `crumb: built ${describe(generated)} to ${outputDirectory}`,
+    `littlecrumb: built ${describe(generated)} to ${outputDirectory}`,
   );
 }
 
 async function runStart() {
   const server = path.join(root, "dist", "server.js");
   if (!(await Bun.file(server).exists())) {
-    throw new Error("crumb: dist/server.js not found; run crumb build first");
+    throw new Error("littlecrumb: dist/server.js not found; run littlecrumb build first");
   }
 
   const child = Bun.spawn(["bun", "server.js"], {
@@ -107,7 +107,7 @@ try {
   else if (command === "build") await runBuild();
   else if (command === "start") await runStart();
   else {
-    console.error("Usage: crumb <dev|build|start>");
+    console.error("Usage: littlecrumb <dev|build|start>");
     process.exitCode = 1;
   }
 } catch (error) {

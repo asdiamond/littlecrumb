@@ -1,4 +1,4 @@
-# crumb
+# littlecrumb
 
 A minimal, client-rendered React framework using Bun's native server and bundler with React Router.
 
@@ -38,16 +38,16 @@ Supported methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS`. U
 ## Usage
 
 ```bash
-bun add react react-dom crumb
-bunx crumb dev
+bun add react react-dom littlecrumb
+bunx littlecrumb dev
 ```
 
 Commands:
 
 ```bash
-crumb dev
-crumb build
-crumb start
+littlecrumb dev
+littlecrumb build
+littlecrumb start
 ```
 
 `dev` generates the route manifest and starts Bun with HMR. `build` writes a production full-stack bundle to `dist/`. Every non-API URL serves the SPA shell; React Router handles matching in the browser.
