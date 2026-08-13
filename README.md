@@ -35,6 +35,14 @@ export async function POST(request: Bun.BunRequest) {
 
 Supported methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS`. Unhandled methods return 405. API routes take precedence over the SPA shell; a `page.tsx` and `route.ts` mapping to the same path is a generate-time error.
 
+## TypeScript
+
+Bun bundles CSS and image imports natively. To teach TypeScript about them, add the shipped ambient types to your tsconfig:
+
+```json
+{ "compilerOptions": { "types": ["bun", "littlecrumb/env"] } }
+```
+
 ## Custom HTML shell
 
 Add an `app/index.html` to replace the default shell — set your own title, meta tags, and favicon. Keep the root element and client script:

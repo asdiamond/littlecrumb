@@ -1,6 +1,6 @@
 {
   "name": "littlecrumb",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Minimal file-based React SPA framework for Bun",
   "homepage": "https://littlecrumb.dev",
   "repository": {
@@ -21,7 +21,10 @@
     "littlecrumb": "./src/cli.ts"
   },
   "exports": {
-    "./client": "./src/client.tsx"
+    "./client": "./src/client.tsx",
+    "./env": {
+      "types": "./src/env.d.ts"
+    }
   },
   "files": [
     "src"
