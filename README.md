@@ -35,6 +35,15 @@ export async function POST(request: Bun.BunRequest) {
 
 Supported methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS`. Unhandled methods return 405. API routes take precedence over the SPA shell; a `page.tsx` and `route.ts` mapping to the same path is a generate-time error.
 
+## Custom HTML shell
+
+Add an `app/index.html` to replace the default shell — set your own title, meta tags, and favicon. Keep the root element and client script:
+
+```html
+<div id="root"></div>
+<script type="module" src="./client.tsx"></script>
+```
+
 ## Usage
 
 ```bash

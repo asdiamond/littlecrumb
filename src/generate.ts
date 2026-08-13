@@ -120,7 +120,13 @@ import { routes } from "./routes";
 start(routes);
 `;
 
-  const htmlSource = `<!doctype html>
+  // An app/index.html takes over the shell entirely (custom title, meta
+  // tags, favicon, ...). It must keep <div id="root"> and the
+  // ./client.tsx script tag.
+  const userShell = Bun.file(path.join(appDirectory, "index.html"));
+  const htmlSource = (await userShell.exists())
+    ? await userShell.text()
+    : `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -195,5 +201,6 @@ console.log(\`littlecrumb: http://localhost:\${port}\`);
 
 export function isGeneratorInput(file: string | null) {
   if (!file) return true;
-  return GENERATOR_INPUT.test(path.basename(file));
+  const base = path.basename(file);
+  return base === "index.html" || GENERATOR_INPUT.test(base);
 }

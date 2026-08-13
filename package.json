@@ -1,6 +1,6 @@
 {
   "name": "littlecrumb",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Minimal file-based React SPA framework for Bun",
   "homepage": "https://littlecrumb.dev",
   "repository": {
